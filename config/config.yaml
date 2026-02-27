@@ -1,0 +1,73 @@
+# Project Information
+project:
+  name: "ad-fraud-detector"
+  version: "0.1.0"
+  description: "Cost-sensitive ML for ad fraud detection"
+
+# Data Settings
+data:
+  # Where to get data from
+  source_url: "https://raw.githubusercontent.com/afursov/TalkingData/master/train_sample.csv"
+  
+  # How much data to use (start small for testing)
+  sample_size: 100000
+  
+  # Train/test split
+  test_size: 0.2      # 20% for testing
+  val_size: 0.2       # 20% for validation
+  random_state: 42    # For reproducibility
+
+# Feature Engineering
+features:
+  # Time-based features
+  temporal:
+    - hour
+    - day
+    - dayofweek
+  
+  # Count-based features
+  aggregations:
+    - ip
+    - app
+    - device
+    - os
+    - channel
+
+# Model Settings
+models:
+  # Cost ratio: Missing fraud costs 400x more than false alarm
+  cost_ratio: 400
+  
+  # XGBoost settings
+  xgboost:
+    n_estimators: 200      # Number of trees
+    max_depth: 6           # How deep each tree
+    learning_rate: 0.1     # How fast to learn
+    subsample: 0.8         # Use 80% of data per tree
+  
+  # LightGBM settings
+  lightgbm:
+    n_estimators: 200
+    max_depth: 6
+    learning_rate: 0.1
+    num_leaves: 63
+  
+  # Random Forest settings
+  random_forest:
+    n_estimators: 100
+    max_depth: 10
+    min_samples_split: 20
+
+# Evaluation Metrics
+evaluation:
+  primary_metric: "pr_auc"  # Best for imbalanced data
+  metrics:
+    - roc_auc
+    - pr_auc
+    - f1_score
+    - recall
+    - precision
+
+# Logging
+logging:
+  level: "INFO"
